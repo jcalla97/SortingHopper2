@@ -7,10 +7,12 @@ import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import me.sothatsit.usefulsnippets.L;
 import point3d.sortinghopper2.backend.RulesBackend;
 import point3d.sortinghopper2.backend.flatfile.Flatfile;
 
 public class Rules {
+	private static final String TAG = "Rules";
 	private final SortingHopper plugin;
 	private final RulesBackend backend;
 	public HashMap<Location, Inventory> rules = new HashMap<Location, Inventory>();
@@ -30,10 +32,7 @@ public class Rules {
 	      	this.backend = new Flatfile(plugin);
 	        }
 	}
-	
 
-	    
-	
 	public Inventory getInv(Location loc){
 		if(rules.containsKey(loc)){
 	  		return rules.get(loc);
@@ -50,19 +49,20 @@ public class Rules {
 	}
 	
 	public boolean checkLocation(Location loc){
+		L.i(TAG, "Location: " + loc);
 		return rules.containsKey(loc);
 	}
 	
 	public boolean checkEmpty(Location loc){
-	        for(ItemStack item : this.getInv(loc).getContents()){
-	              if(item != null) return false;
-	        }
-	        return true;
+		for(ItemStack item : this.getInv(loc).getContents()){
+			if(item != null) return false;
+		}
+		return true;
 	}
 
 	public void removeRule(Location loc){
       	if(rules.containsKey(loc)){
-      		SortingHopper.DebugLog("Break: Removing rule");
+      		L.i(TAG, "Break: Removing rule");
       		rules.remove(loc);
       	}
 	}
@@ -76,7 +76,6 @@ public class Rules {
 
 	}
 	public void loadAndBackup(){
-		
 		if(loadRules()) {
 			backend.makeBackup(this.rules);
 		}

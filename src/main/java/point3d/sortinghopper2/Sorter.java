@@ -11,9 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.sothatsit.usefulsnippets.GlowHelperUtil;
+import me.sothatsit.usefulsnippets.L;
 
 public class Sorter {
 
+	private static final String TAG = "Sorter";
 	private static String sorter_primaryname = "Sorter";
 	private static List<String> sorter_names =  new ArrayList<>(Arrays.asList(sorter_primaryname));
 	private static List<String> sorter_lore =  new ArrayList<>();

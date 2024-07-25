@@ -7,13 +7,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import point3d.sortinghopper2.PlayerListener;
+import me.sothatsit.usefulsnippets.L;
+
 /**
  * Sorting Hopper plugin. Allows the creation of a special hopper that
  * "sorts", or only accepts a particular input.
  */
 public class SortingHopper extends JavaPlugin {
-	
+
+	private static final String TAG = "SortingHopper";
   	public static final Logger mclog = Logger.getLogger("minecraft"); 
   	private Rules rules;
   	private Sorter sorter;
@@ -22,6 +24,8 @@ public class SortingHopper extends JavaPlugin {
   	
 	@Override
 	public void onEnable() {
+		L.setLogger(this.getLogger());
+		L.i(TAG,"Enabling SortingHopper2");
 		this.rules = new Rules(this);
 		this.sorter = new Sorter(this);
 
@@ -31,13 +35,13 @@ public class SortingHopper extends JavaPlugin {
 		debug=getConfig().getBoolean("debug");
 
 		this.getCommand("sortinghopper").setExecutor(new CommandListener(this));
-		
+
 		final PlayerListener playerListener = new PlayerListener(this);
 		pm.registerEvents(playerListener, this);
-		
+
 		final HopperListener hopperListener = new HopperListener(this);
 		pm.registerEvents(hopperListener, this);
-		
+
 		if (getConfig().getBoolean("replacedrops")) {
 			final BreakListener breakListener = new BreakListener(this);
 			pm.registerEvents(breakListener, this);
@@ -49,12 +53,12 @@ public class SortingHopper extends JavaPlugin {
 			}
 		}
 
-		//Config setting renamed, checking old name for compatibility 
-		if(getConfig().getBoolean("check_lore") || getConfig().getBoolean("preventrename") || getConfig().getBoolean("convert_old")){
+		//Config setting renamed, checking old name for compatibility
+		if(getConfig().getBoolean("check_lore")){
 			final PlaceListener placeListener = new PlaceListener(this);
 			pm.registerEvents(placeListener, this);
 		}
-		
+
 		if (getConfig().getBoolean("preventitempickup")) {
 			final PickupListener pickupListener = new PickupListener(this);
 			pm.registerEvents(pickupListener, this);
@@ -70,13 +74,12 @@ public class SortingHopper extends JavaPlugin {
 
 		rules.loadAndBackup();
 		TagUtil.loadSortingTags();
-
-		this.getLogger().info("started!");
+		L.i(TAG,"SortingHopper2 started!");
 	}
 
 	@Override
 	public void onDisable() {
-			this.getLogger().info("Saving rules...");
+			L.i(TAG, "Saving rules...");
 			rules.saveRules();
 	}
 
@@ -85,7 +88,7 @@ public class SortingHopper extends JavaPlugin {
 		TagUtil.loadSortingTags();
 		sorter.reload();
 	}
-	
+
 	private void loadConf(){
 		this.saveDefaultConfig();
 
@@ -95,14 +98,8 @@ public class SortingHopper extends JavaPlugin {
 		}
 		sorter.reload();
 	}
-	
+
 	public Rules getRules(){
 		return this.rules;
-	}
-
-	public static void DebugLog(String message){
-		if(debug){
-			mclog.info("[Sorting Hopper2] " + message);
-		}
 	}
 }

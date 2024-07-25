@@ -11,6 +11,9 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import me.sothatsit.usefulsnippets.L;
+
 public class TagUtil {
 	private final static File groupsymlfile = new File("plugins" + File.separator + "SortingHopper2" + File.separator + "itemgroups.yml");
 	
@@ -98,7 +101,7 @@ public class TagUtil {
 				}
 				
 				new SortingTag(listname, materials);
-				SortingHopper.DebugLog("Added " + listname);
+				L.i("TagUtil", "Added " + listname);
 			}
 			else {
 				SortingHopper.mclog.warning("[SortingHopper2] Invalid array: " + listname + " in itemgroups.yml");

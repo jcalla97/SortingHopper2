@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class L {
-    private static Logger mclogger = Logger.getLogger("minecraft");
+    private static Logger mclogger;
 
     public static void i(String tag, String msg){
         mclogger.log(Level.INFO, tag + ": " + msg);
@@ -24,5 +24,8 @@ public class L {
 
     public static void e(String tag, String msg) {
         mclogger.log(Level.SEVERE, tag + ": " + msg);
+    }
+    public static void setLogger(Logger logger) {
+        mclogger = logger;
     }
 }
