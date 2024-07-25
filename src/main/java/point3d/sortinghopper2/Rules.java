@@ -70,11 +70,12 @@ public class Rules {
 	public void saveRules(){
 		saveRules("rules");
 	}
-	public void saveRules(String filename) {
 
+	public void saveRules(String filename) {
 		backend.save(this.rules, filename);
 
 	}
+
 	public void loadAndBackup(){
 		if(loadRules()) {
 			backend.makeBackup(this.rules);

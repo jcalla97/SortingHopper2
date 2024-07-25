@@ -15,12 +15,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.sothatsit.usefulsnippets.GlowHelperUtil;
+import me.sothatsit.usefulsnippets.L;
 import point3d.sortinghopper2.Serialization;
 import point3d.sortinghopper2.SortingHopper;
 import point3d.sortinghopper2.backend.RulesBackend;
 
 public class Flatfile implements RulesBackend {
 
+	private static final String TAG = "FlatFile";
 	private final SortingHopper plugin;
 	private final int backups_max;
 
@@ -34,14 +36,15 @@ public class Flatfile implements RulesBackend {
 		try {
 		      File file = new File(plugin.getDataFolder(), name + ".dat");
 		      ObjectOutputStream output;
-			output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
+			  output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)));
 		      HashMap<String, String> rules_serialized = new HashMap<String, String>();
 		      
 		      //this.rules.forEach((k,v) -> rules_serialized.put(Serialization.locationToString(k), Serialization.toBase64(v)));
 		      
 		      for(Location k : rules.keySet()){
-		      	if(k != null){
-		      		rules_serialized.put(Serialization.locationToString(k), Serialization.toBase64(rules.get(k)));
+		      	if(k != null) {
+					L.i(TAG, "Put rule at Location: " + Serialization.locationToString(k));
+					rules_serialized.put(Serialization.locationToString(k), Serialization.toBase64(rules.get(k)));
 		      	}
 		      }
 		       
@@ -59,35 +62,34 @@ public class Flatfile implements RulesBackend {
 	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<Location, Inventory> load(String name) {
-	      HashMap<String, String> rawmap = new HashMap<>();
-	      HashMap<Location, Inventory> resultmap = new HashMap<>();
+		L.i(TAG, "Load Rules");
+	    HashMap<String, String> rawmap;
+	    HashMap<Location, Inventory> resultmap = new HashMap<>();
 		try {
-		      File file = new File(plugin.getDataFolder(), name + ".dat");
-		      if(!file.exists()){
-		      	SortingHopper.mclog.severe("[SortingHopper] file not found: " + name + ".dat");
+			File file = new File(plugin.getDataFolder(), name + ".dat");
+		    if(!file.exists()){
+		      	L.e(TAG, "[SortingHopper] file not found: " + name + ".dat");
 		      	return null;
-		      }
-		      ObjectInputStream input;
+		    }
+		    ObjectInputStream input;
 			input = new ObjectInputStream(new GZIPInputStream(new FileInputStream(file)));
-		      Object readObject = input.readObject();
-		      input.close();
-		      if(!(readObject instanceof HashMap)) return null;
-		      rawmap = (HashMap<String, String>) readObject;
+		    Object readObject = input.readObject();
+		    input.close();
+		    if(!(readObject instanceof HashMap)) return null;
+		    rawmap = (HashMap<String, String>) readObject;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	   
-	      for(String key : rawmap.keySet()) {
+		for(String key : rawmap.keySet()) {
 	      	try {
-	      		//plugin.DebugLog("Key: " + Serialization.stringToLocation(key));
+	      		L.i(TAG,"Key: " + Serialization.stringToLocation(key));
 	      		resultmap.put(Serialization.stringToLocation(key), fixGlow(Serialization.inventoryFromBase64(rawmap.get(key))));
 	      	} catch  (Exception e) {
 	      		e.printStackTrace();
 	      		return null;
 	      	}
-	      	
-	       
 	      }
 	      return resultmap;
 	}
@@ -117,7 +119,7 @@ public class Flatfile implements RulesBackend {
 				return backupN;
 			}
 			else {
-				plugin.getLogger().warning("Unable to load backup " + i + ", trying next one...");
+				L.w(TAG, "Unable to load backup " + i + ", trying next one...");
 			}
 		}
 		return 0;

@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import me.sothatsit.usefulsnippets.L;
 
 public class TagUtil {
+	private static final String TAG = "TagUtil";
 	private final static File groupsymlfile = new File("plugins" + File.separator + "SortingHopper2" + File.separator + "itemgroups.yml");
 	
 	/**
@@ -80,6 +81,7 @@ public class TagUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static void loadSortingTags(){
+		L.i(TAG, "Load Sorting Tags");
 		SortingTag.reset();
 		
 		if(!groupsymlfile.exists()){
@@ -87,26 +89,23 @@ public class TagUtil {
 		}
 		YamlConfiguration groupsyml =  YamlConfiguration.loadConfiguration(groupsymlfile);
 
-		for(String listname : groupsyml.getKeys(false)){
-			if(groupsyml.getList(listname) instanceof List<?>){
-				Set<Material> materials =  new HashSet<>();
-				for(String itemname : (List<String>)groupsyml.getList(listname)){
-					if(Material.getMaterial(itemname) == null){
+		for(String listname : groupsyml.getKeys(false)) {
+			if (groupsyml.getList(listname) instanceof List<?>) {
+				Set<Material> materials = new HashSet<>();
+				for (String itemname : (List<String>) groupsyml.getList(listname)) {
+					if (Material.getMaterial(itemname) == null) {
 						SortingHopper.mclog.warning("[SortingHopper2] Invalid material name: " + itemname + " in itemgroups.yml");
 						SortingHopper.mclog.warning("[SortingHopper2] Check https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for reference!");
-					}
-					else {
+					} else {
 						materials.add(Material.getMaterial(itemname));
 					}
 				}
-				
+
 				new SortingTag(listname, materials);
-				L.i("TagUtil", "Added " + listname);
+			} else {
+				L.w(TAG, "[SortingHopper2] Invalid array: " + listname + " in itemgroups.yml");
 			}
-			else {
-				SortingHopper.mclog.warning("[SortingHopper2] Invalid array: " + listname + " in itemgroups.yml");
-			}
-		}	
+		}
 	}
 	/*
 	 * Returns List<String> of items which given SortingTag object contains
